@@ -44,8 +44,8 @@ let
       + lib.concatMapStringsSep (flatpakPackage: ''
         "${pkgs.flatpak}/bin/flatpak update -y ${flatpakPackage.name} && ${pkgs.flatpak}/bin/flatpak override --user=${flatpakPackage.user} --app=${flatpakPackage.name} --${flatpakPackage.permissions}"
       '') config.flatpakPackages;
+    };
   } else {};
-
 in {
   options = options;
   config = flatpakConfig;
