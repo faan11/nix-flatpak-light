@@ -53,8 +53,5 @@ in
         done
       '';
     };
-  } else {
-    # If Flatpak support is not enabled, return an empty configuration
-    {};
-  };
+  }
 }
