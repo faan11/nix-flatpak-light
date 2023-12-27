@@ -36,24 +36,20 @@ let
       packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) config.flatpakPackages;
 
       postInstall = ''
-        + lib.concatStringsSep " && "
-          (map (pkg: ''
-            flatpak install -y ${pkg.repo} ${pkg.name};
-            flatpak override --${pkg.user} --app ${pkg.name} --${pkg.permissions}
-          '') config.flatpakPackages);
+        + lib.concatMapStringsSep " && " (pkg: ''
+          flatpak install -y ${pkg.repo} ${pkg.name}
+          flatpak override --${pkg.user} --app ${pkg.name} --${pkg.permissions}
+        '') config.flatpakPackages;
 
       postUpdate = ''
-        + lib.concatStringsSep " && "
-          (map (pkg: ''
-            flatpak update -y ${pkg.name};
-            flatpak override --${pkg.user} --app ${pkg.name} --${pkg.permissions}
-          '') config.flatpakPackages);
+        + lib.concatMapStringsSep " && " (pkg: ''
+          flatpak update -y ${pkg.name}
+          flatpak override --${pkg.user} --app ${pkg.name} --${pkg.permissions}
+        '') config.flatpakPackages;
     };
-  } else {
-    programs.flatpak = { enable = false; };
-  };
+  } else {};
 
 in {
   options = options;
-  config = flatpakConfig;
+  config = flatpakConfig or {};
 }
