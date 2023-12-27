@@ -36,12 +36,12 @@ let
       packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) config.flatpakPackages;
 
       postInstall = ''
-        + lib.concatMapStringsSep (flatpakPackage: ''
+        + lib.concatMapStringsSep ({flatpakPackage}: ''
           "${pkgs.flatpak}/bin/flatpak install -y ${flatpakPackage.repo} ${flatpakPackage.name} && ${pkgs.flatpak}/bin/flatpak override --user=${flatpakPackage.user} --app=${flatpakPackage.name} --${flatpakPackage.permissions}"
         '') config.flatpakPackages;
 
       postUpdate = ''
-        + lib.concatMapStringsSep (flatpakPackage: ''
+        + lib.concatMapStringsSep ({flatpakPackage}: ''
           "${pkgs.flatpak}/bin/flatpak update -y ${flatpakPackage.name} && ${pkgs.flatpak}/bin/flatpak override --user=${flatpakPackage.user} --app=${flatpakPackage.name} --${flatpakPackage.permissions}"
         '') config.flatpakPackages;
     };
