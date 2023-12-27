@@ -1,7 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
-  config = {
+  options = {
     allowFlatpak = {
       default = false;
       type = types.bool;
