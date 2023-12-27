@@ -31,14 +31,14 @@ with lib;
       postInstall = ''
         for package in ${config.flatpakPackages}; do
           flatpak install -y ${package.repo} ${package.name}
-          flatpak override --user --app ${package.name} --${package.permissions}
+          flatpak override --${package.user} --app ${package.name} --${package.permissions}
         done
       '';
 
       postUpdate = ''
         for package in ${config.flatpakPackages}; do
           flatpak update -y ${package.name}
-          flatpak override --user --app ${package.name} --${package.permissions}
+          flatpak override --${package.user} --app ${package.name} --${package.permissions}
         done
       '';
     };
