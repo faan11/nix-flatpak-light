@@ -3,7 +3,7 @@ let
   types = args.types;
 
   options = {
-    allowFlatpak = {
+    enable = {
       default = false;
       type = types.bool;
       description = "Enable Flatpak support";
@@ -22,7 +22,7 @@ let
     };
   };
 
-  enableFlatpak = config.allowFlatpak && config.flatpakPackages != [] && config.flatpakRemotes != [];
+  enableFlatpak = config.enable && config.flatpakPackages != [] && config.flatpakRemotes != [];
 
   flatpakConfig = if enableFlatpak then {
     services.flatpak = {
