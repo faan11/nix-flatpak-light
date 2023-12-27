@@ -1,48 +1,51 @@
-{ lib, pkgs, types, ... }@args:
+{ lib, pkgs, config, ... }@args:
 let
+  types = args.types;
+
   options = {
     allowFlatpak = {
       default = false;
-      type = args.types.bool;
+      type = types.bool;
       description = "Enable Flatpak support";
     };
 
     flatpakPackages = {
       default = [];
-      type = args.types.listOf (args.types.attrsOf args.types.str);
+      type = types.listOf (types.attrsOf types.str);
       description = "List of Flatpak packages to install/update";
     };
     
     flatpakRemotes = {
       default = [];
-      type = args.types.listOf args.types.string;
+      type = types.listOf types.string;
       description = "List of Flatpak remotes";
     };
   };
 
-in {
+in
+{
   options = options;
 
-  config = mkIf args.config.allowFlatpak && has args.config.flatpakPackages && has args.config.flatpakRemotes then {
+  config = if config.allowFlatpak && has config.flatpakPackages && has config.flatpakRemotes then {
     services.flatpak = {
       enable = true;
-      extraRemotes = args.config.flatpakRemotes;
+      extraRemotes = config.flatpakRemotes;
     };
 
     # Function to install/update Flatpak packages and set permissions
     programs.flatpak = {
       enable = true;
-      packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) args.config.flatpakPackages;
+      packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) config.flatpakPackages;
 
       postInstall = ''
-        for p in ${args.config.flatpakPackages}; do
+        for p in ${config.flatpakPackages}; do
           flatpak install -y $p.repo $p.name
           flatpak override --$p.user --app $p.name --$p.permissions
         done
       '';
 
       postUpdate = ''
-        for p in ${args.config.flatpakPackages}; do
+        for p in ${config.flatpakPackages}; do
           flatpak update -y $p.name
           flatpak override --$p.user --app $p.name --$p.permissions
         done
