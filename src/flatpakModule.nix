@@ -1,9 +1,13 @@
 { config, lib, pkgs, ... }:
 
-with lib;
-
 {
   options = {
+    allowFlatpak = mkOption {
+      default = false;
+      type = types.bool;
+      description = "Enable Flatpak support";
+    };
+
     flatpakPackages = mkOption {
       type = types.listOf types.attrs;
       default = [];
@@ -17,7 +21,7 @@ with lib;
     };
   };
 
-  config = mkIf config.allowFlatpak && has flatpakPackages && has flatpakRemotes {
+  config = if config.allowFlatpak then {
     services.flatpak = {
       enable = true;
       extraRemotes = config.flatpakRemotes;
@@ -42,5 +46,5 @@ with lib;
         done
       '';
     };
-  } {};
+  } else {};
 }
