@@ -7,10 +7,7 @@
 
   outputs = { self, nixpkgs }: {
     modules = {
-      flatpakModule = {
-        description = "Module for managing Flatpak packages";
-        path = ./src/flatpakModule.nix;
-      };
+      flatpak = { module = import ./src/flatpakModule.nix;}
     };
   };
 }
