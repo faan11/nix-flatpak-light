@@ -26,7 +26,7 @@ in
 {
   options = options;
 
-  config = if config.allowFlatpak && has config.flatpakPackages && has config.flatpakRemotes then {
+  config = if config.allowFlatpak then {
     services.flatpak = {
       enable = true;
       extraRemotes = config.flatpakRemotes;
