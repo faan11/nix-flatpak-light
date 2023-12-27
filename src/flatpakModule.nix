@@ -1,22 +1,22 @@
 { config, lib, pkgs, ... }:
 
 {
-  options = {
-    allowFlatpak = mkOption {
+  config = {
+    allowFlatpak = {
       default = false;
       type = types.bool;
       description = "Enable Flatpak support";
     };
 
-    flatpakPackages = mkOption {
-      type = types.listOf types.attrs;
+    flatpakPackages = {
       default = [];
+      type = types.listOf (types.attrsOf types.str);
       description = "List of Flatpak packages to install/update";
     };
     
-    flatpakRemotes = mkOption {
-      type = types.listOf types.string;
+    flatpakRemotes = {
       default = [];
+      type = types.listOf types.string;
       description = "List of Flatpak remotes";
     };
   };
