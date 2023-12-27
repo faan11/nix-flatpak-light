@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 
-{
+let
   options = {
     allowFlatpak = {
       default = false;
@@ -21,7 +21,12 @@
     };
   };
 
-  config = if config.allowFlatpak then {
+in {
+  options = options;
+
+  config = { config, lib, pkgs, ... }:
+
+  if config.allowFlatpak then {
     services.flatpak = {
       enable = true;
       extraRemotes = config.flatpakRemotes;
