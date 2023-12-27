@@ -22,7 +22,7 @@ let
     };
   };
 
-  enableFlatpak = args.config.allowFlatpak && has args.config.flatpakPackages && has args.config.flatpakRemotes;
+  enableFlatpak = args.config.allowFlatpak && builtins.hasAttr "flatpakPackages" args.config && builtins.hasAttr "flatpakRemotes" args.config;
 
   flatpakConfig = if enableFlatpak then {
     services.flatpak = {
