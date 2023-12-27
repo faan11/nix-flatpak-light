@@ -37,14 +37,14 @@ let
 
       postInstall = ''
         + lib.concatMapStringsSep " && " (pkg: ''
-          flatpak install -y "${pkg.repo}" "${pkg.name}"
-          flatpak override --"${pkg.user}" --app "${pkg.name}" --"${pkg.permissions}"
+          ${pkgs.flatpak}/bin/flatpak install -y "${pkg.repo}" "${pkg.name}"
+          ${pkgs.flatpak}/bin/flatpak override --"${pkg.user}" --app "${pkg.name}" --"${pkg.permissions}"
         '') config.flatpakPackages;
 
       postUpdate = ''
         + lib.concatMapStringsSep " && " (pkg: ''
-          flatpak update -y "${pkg.name}"
-          flatpak override --"${pkg.user}" --app "${pkg.name}" --"${pkg.permissions}"
+          ${pkgs.flatpak}/bin/flatpak update -y "${pkg.name}"
+          ${pkgs.flatpak}/bin/flatpak override --"${pkg.user}" --app "${pkg.name}" --"${pkg.permissions}"
         '') config.flatpakPackages;
     };
   } else {};
