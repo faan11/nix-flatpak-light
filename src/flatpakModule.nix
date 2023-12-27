@@ -54,5 +54,5 @@ let
 in
 {
   options = options;
-  config = flatpakConfig or {};
+  config = flatpakConfig;
 }
