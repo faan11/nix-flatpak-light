@@ -33,16 +33,16 @@
       packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) config.flatpakPackages;
 
       postInstall = ''
-        for package in ${config.flatpakPackages}; do
-          flatpak install -y ${package.repo} ${package.name}
-          flatpak override --${package.user} --app ${package.name} --${package.permissions}
+        for p in ${config.flatpakPackages}; do
+          flatpak install -y $p.repo $p.name
+          flatpak override --$p.user --app $p.name --$p.permissions
         done
       '';
 
       postUpdate = ''
-        for package in ${config.flatpakPackages}; do
-          flatpak update -y ${package.name}
-          flatpak override --${package.user} --app ${package.name} --${package.permissions}
+        for p in ${config.flatpakPackages}; do
+          flatpak update -y $p.name
+          flatpak override --$p.user --app $p.name --$p.permissions
         done
       '';
     };
