@@ -24,11 +24,7 @@ let
 
   enableFlatpak = args.config.allowFlatpak && has args.config.flatpakPackages && has args.config.flatpakRemotes;
 
-in
-{
-  options = options;
-
-  config = if enableFlatpak then {
+  flatpakConfig = if enableFlatpak then {
     services.flatpak = {
       enable = true;
       extraRemotes = args.config.flatpakRemotes;
@@ -53,5 +49,10 @@ in
         done
       '';
     };
-  }
+  } else {};
+
+in
+{
+  options = options;
+  config = flatpakConfig or {};
 }
