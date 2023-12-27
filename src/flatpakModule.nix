@@ -22,36 +22,38 @@ let
     };
   };
 
-  enableFlatpak = args.config.allowFlatpak && args.config.flatpakPackages != [] && args.config.flatpakRemotes != [];
+  enableFlatpak = config.allowFlatpak && config.flatpakPackages != [] && config.flatpakRemotes != [];
 
-in
-{
-  options = options;
-
-  config = if enableFlatpak then {
+  flatpakConfig = if enableFlatpak then {
     services.flatpak = {
       enable = true;
-      extraRemotes = args.config.flatpakRemotes;
+      extraRemotes = config.flatpakRemotes;
     };
 
     # Function to install/update Flatpak packages and set permissions
     programs.flatpak = {
       enable = true;
-      packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) args.config.flatpakPackages;
+      packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) config.flatpakPackages;
 
       postInstall = ''
-        for p in ${args.config.flatpakPackages}; do
-          flatpak install -y $p.repo $p.name
-          flatpak override --$p.user --app $p.name --$p.permissions
-        done
-      '';
+        + lib.concatStringsSep " && "
+          (map (pkg: ''
+            flatpak install -y ${pkg.repo} ${pkg.name};
+            flatpak override --${pkg.user} --app ${pkg.name} --${pkg.permissions}
+          '') config.flatpakPackages);
 
       postUpdate = ''
-        for p in ${args.config.flatpakPackages}; do
-          flatpak update -y $p.name
-          flatpak override --$p.user --app $p.name --$p.permissions
-        done
-      '';
+        + lib.concatStringsSep " && "
+          (map (pkg: ''
+            flatpak update -y ${pkg.name};
+            flatpak override --${pkg.user} --app ${pkg.name} --${pkg.permissions}
+          '') config.flatpakPackages);
     };
-  } else {};
+  } else {
+    programs.flatpak = { enable = false; };
+  };
+
+in {
+  options = options;
+  config = flatpakConfig;
 }
