@@ -22,34 +22,39 @@ let
     };
   };
 
+  enableFlatpak = args.config.allowFlatpak && has args.config.flatpakPackages && has args.config.flatpakRemotes;
+
 in
 {
   options = options;
 
-  config = if config.allowFlatpak then {
+  config = if enableFlatpak then {
     services.flatpak = {
       enable = true;
-      extraRemotes = config.flatpakRemotes;
+      extraRemotes = args.config.flatpakRemotes;
     };
 
     # Function to install/update Flatpak packages and set permissions
     programs.flatpak = {
       enable = true;
-      packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) config.flatpakPackages;
+      packages = map (pkg: pkgs.flatpakPackages."${pkg.name}" or pkgs.flatpakPackages.${pkg.name}) args.config.flatpakPackages;
 
       postInstall = ''
-        for p in ${config.flatpakPackages}; do
+        for p in ${args.config.flatpakPackages}; do
           flatpak install -y $p.repo $p.name
           flatpak override --$p.user --app $p.name --$p.permissions
         done
       '';
 
       postUpdate = ''
-        for p in ${config.flatpakPackages}; do
+        for p in ${args.config.flatpakPackages}; do
           flatpak update -y $p.name
           flatpak override --$p.user --app $p.name --$p.permissions
         done
       '';
     };
-  } else {};
+  } else {
+    # If Flatpak support is not enabled, return an empty configuration
+    {};
+  };
 }
