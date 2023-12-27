@@ -1,11 +1,5 @@
 {
-  description = "Flatpak Management Flake";
-  
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-  };
-
-  outputs = { self, nixpkgs }: {
+  outputs = _: {
     modules = {
       flatpak = { import ./src/flatpakModule.nix;}
     };
