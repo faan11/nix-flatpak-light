@@ -7,7 +7,7 @@
 
   outputs = { self, nixpkgs }: {
     modules = {
-      flatpak = { module = import ./src/flatpakModule.nix;}
+      flatpak = { import ./src/flatpakModule.nix;}
     };
   };
 }
